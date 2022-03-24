@@ -12,23 +12,19 @@ import (
 
 func main() {
 	fmt.Println("Starting...")
-	scheduled_start := time.Now()
 	freq := time.Minute * 2
-	for {
-		parseFeed(scheduled_start)
-		diff := time.Now().Sub(scheduled_start)
-		time.Sleep(freq - diff)
-		scheduled_start = scheduled_start.Add(freq)
+	for tick := range time.Tick(freq) {
+		parseFeed(tick)
 	}
 }
 
-func parseFeed(scheduled_start time.Time) {
+func parseFeed(start time.Time) {
 	url := "https://rpilocator.com/feed.rss"
-	fmt.Printf("Fetching feed at %v\n", scheduled_start.Format("15:04:05"))
+	fmt.Printf("Fetching feed at %v\n", start.Format("15:04:05"))
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(url)
 	for _, item := range feed.Items {
-		if item.PublishedParsed.After(scheduled_start) {
+		if item.PublishedParsed.After(start) {
 			message := formMessage(item)
 			sendMessage(message)
 			fmt.Println(message)
