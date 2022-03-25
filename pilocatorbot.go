@@ -25,7 +25,10 @@ func main() {
 	}
 	log.Printf("Fetching at %v every %v\n", conf.RssUrl, conf.UpdateFreq)
 	for tick := range time.Tick(conf.UpdateFreq) {
-		parseFeed(tick, conf)
+		err = parseFeed(tick, conf)
+		if err != nil {
+			log.Println(err) // TODO: improve this error handling
+		}
 	}
 }
 
@@ -37,10 +40,13 @@ func loadConfig() (conf config, err error) {
 	return
 }
 
-func parseFeed(start time.Time, conf config) {
+func parseFeed(start time.Time, conf config) (err error) {
 	url := conf.RssUrl
 	fp := gofeed.NewParser()
-	feed, _ := fp.ParseURL(url)
+	feed, err := fp.ParseURL(url)
+	if err != nil {
+		return
+	}
 	for _, item := range feed.Items {
 		if item.PublishedParsed.After(start.Add(-conf.UpdateFreq)) {
 			message := formMessage(item)
@@ -48,6 +54,7 @@ func parseFeed(start time.Time, conf config) {
 			log.Println(message)
 		}
 	}
+	return
 }
 
 func formMessage(item *gofeed.Item) string {
