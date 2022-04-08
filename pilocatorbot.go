@@ -46,7 +46,9 @@ func parseFeed(start time.Time, conf config) (err error) {
 	for _, item := range feed.Items {
 		if item.PublishedParsed.After(start.Add(-conf.UpdateFreq)) {
 			message := formMessage(item)
-			sendMessage(message, conf)
+			if err = sendMessage(message, conf); err != nil {
+				return
+			}
 			log.Println(message)
 		}
 	}
@@ -59,11 +61,12 @@ func formMessage(item *gofeed.Item) (message string) {
 	return
 }
 
-func sendMessage(message string, conf config) {
+func sendMessage(message string, conf config) (err error) {
 	baseUrl := fmt.Sprintf("https://api.telegram.org/bot%v/sendMessage", conf.Token)
 	v := url.Values{}
 	v.Set("chat_id", conf.ChatId)
 	v.Set("text", message)
 	perform := baseUrl + "?" + v.Encode()
-	http.Get(perform)
+	_, err = http.Get(perform)
+	return
 }
