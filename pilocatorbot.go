@@ -25,9 +25,8 @@ func main() {
 	}
 	log.Printf("Fetching at %v every %v\n", conf.RssUrl, conf.UpdateFreq)
 	for tick := range time.Tick(conf.UpdateFreq) {
-		err = parseFeed(tick, conf)
-		if err != nil {
-			log.Println(err) // TODO: improve this error handling
+		if err = parseFeed(tick, conf); err != nil {
+			log.Println(err)
 		}
 	}
 }
