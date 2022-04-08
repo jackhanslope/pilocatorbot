@@ -53,10 +53,10 @@ func parseFeed(start time.Time, conf config) (err error) {
 	return
 }
 
-func formMessage(item *gofeed.Item) string {
+func formMessage(item *gofeed.Item) (message string) {
 	url, _ := url.Parse(item.Link)
-	message := fmt.Sprintf("%v %v://%v", item.Title, url.Scheme, url.Host)
-	return message
+	message = fmt.Sprintf("%v %v://%v", item.Title, url.Scheme, url.Host)
+	return
 }
 
 func sendMessage(message string, conf config) {
