@@ -34,9 +34,6 @@ func main() {
 
 func loadConfig() (conf config, err error) {
 	err = env.Parse(&conf)
-	if err != nil {
-		return
-	}
 	return
 }
 
