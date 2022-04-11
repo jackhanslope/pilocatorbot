@@ -14,7 +14,7 @@ import (
 type config struct {
 	Token      string        `env:"PILOCBOT_TOKEN,notEmpty"`
 	ChatId     string        `env:"PILOCBOT_CHAT_ID,notEmpty"`
-	RssUrl     string        `env:"PILOCBOT_RSS_URL,notEmpty"`
+	RssUrl     string        `env:"PILOCBOT_RSS_URL" envDefault:"https://rpilocator.com/feed.rss"`
 	UpdateFreq time.Duration `env:"PILOCBOT_UPDATE_FREQ" envDefault:"2m"`
 }
 
